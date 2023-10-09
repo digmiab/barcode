@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner</title>
+    <style>
+        body {
+            background-color: #336666;
+            font-family: Arial, sans-serif;
+            padding: 10px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+        }
+
+        header img {
+            width: 100px;
+            margin-right: 10px;
+        }
+
+        header p {
+            color: white;
+            font-size: 24px;
+            margin: 0;
+        }
+
+        #scan-btn {
+            display: block;
+            background-color: white;
+            color: #336666;
+            padding: 15px;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            text-align: center;
+            margin: 30px auto;
+        }
+
+        #barcode {
+            width: 5%;
+            padding: 10px;
+            margin: 15px auto;
+            display: block;
+            font-size: 18px;
+        }
+
+        #product-info h2 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        #product-info p {
+            font-size: 18px;
+            color: white;
+        }
+
+        #product-info #price {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Added style for the information box */
+        .info-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin-left: 10px; /* Minimal margin */
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <p>Powered by</p><br>
+
+        <br><img src="https://Digitalmediainstaller.com/_Customers/Digmi/DigmiWhite.png" alt="Logo">
+            </header>
+
+    <form action="/" method="post">
+        <button type="button" id="scan-btn">Scan Barcode</button>
+        <input type="text" id="barcode" name="barcode" autofocus placeholder="Enter barcode...">
+    </form>
+
+    <div id="product-info" style="display: flex; align-items: center; justify-content: center; height: 60vh;">
+        <!-- Image container -->
+        <div style="flex: 1; display: flex; justify-content: center;">
+            <img src="{{ product.image_path }}" alt="Product Image" style="width: 300px; height: 300px; object-fit: cover;">
+        </div>
+
+        <!-- Text information container with added box style -->
+        <div class="info-box" style="flex: 1; text-align: center;">
+            <h2>{{ product.title }}</h2>
+            <p>{{ product.info_text }}</p>
+            <p id="price">{{ product.price }} kr</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('barcode').addEventListener('change', function() {
+            this.form.submit();
+        });
+    </script>
+
+</body>
+
+</html>

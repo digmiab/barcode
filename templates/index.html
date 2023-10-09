@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner</title>
+    <style>
+         * {
+            box-sizing: border-box;
+        }
+        body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; 
+}
+
+        body {
+            background-color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 110px; /* Space for the logo at the top */
+            height: calc(100vh - 110px); /* Subtracting the space used by the logo */
+            overflow: hidden; /* To prevent scroll if not needed */
+        }
+        .logo-container {
+        position: absolute; 
+        top: 0; 
+        left: 50%; 
+        transform: translateX(-50%); 
+        text-align: center;
+        width: 100%;
+        padding: 10px 0;
+        background-color: #ffffff; /* Ensure background is solid */
+    }
+    .product-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;  /* Horizontally center the items */
+    justify-content: center;  /* Vertically center the items */
+    height: 100%; /* Ensure the container occupies full available height */
+}
+.img-container {
+    border-radius: 5px; /* Optional: To add rounded corners */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 70vh; /* Adjust based on your preference */
+    position: relative;
+    }
+        .text-container {
+            width: 100%;
+            text-align: center;           
+            position: relative;
+        }
+        img.product {
+            display: block;
+            width: 30%;
+            height: 40vh;
+            object-fit: contain; /* Prevent cropping */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+            img.logo {
+            width: 100px;
+            height: auto;
+        }
+        h2, p {
+            margin: 0;
+        }
+        #powered {
+            font-size: 1.5vh;
+            font-weight: bold;
+        }
+        form {
+            position: absolute;
+            opacity: 0; /* Make form invisible */
+            pointer-events: none; /* Prevent any mouse interaction */
+        }
+        input {
+            padding: 1vh;
+            font-size: 2vh;
+        }
+        .placeholder-text {
+            font-size: 2vh;
+            color: #ddd;
+        }
+        
+        /* Add styles for the scanner window */
+    .scanner-window {
+    position: relative;
+    width: 300px;
+    height: 20vh; /* you can adjust height accordingly */
+    overflow: hidden; /* Add overflow hidden to ensure inner content does not spill out */
+    position: relative;
+}
+.scanner-line {
+    position: relative;
+    top: 75px; /* Adjust if needed */
+    left: 30px;
+    width: 80%;
+    height: 3px;
+    background-color: red;
+    }
+
+</style>
+ <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+ <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    
+ <!-- If you enabled Realtime Database -->
+ <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+    <form action="/" method="post">
+        <input type="text" id="barcode" name="barcode" autofocus placeholder="Enter barcode...">
+    </form>
+    <div class="logo-container">
+        <div id="powered">
+            Powered by
+        </div>
+        <img src="https://Digitalmediainstaller.com/_Customers/Digmi/DigmiBlack.png" alt="Logo" class="logo">
+    </div>
+    <div id="barcode-scanner" class="scanner-window">
+<div class="scanner-line"></div>
+</div>
+    {% if product %}
+    <div class="img-container">
+        <img src="{{ product.image_path }}" alt="Product Image" class="product">
+    </div>
+    {% else %}
+    <div class="img-container placeholder-container">
+        <div class="placeholder-text">Skanna produkt</div>
+    </div>
+{% endif %}
+</div>
+    <div class="text-container">
+        {% if product %}
+        <h2>{{ product.product_name }}</h2>
+        <p>{{ product.info_text }}</p>
+        <p id="price">{{ product.price }} kr</p>
+        {% else %}
+        <h2 class="placeholder-text">Produktens namn</h2>
+        <p class="placeholder-text">Produktens Information</p>
+        <p class="placeholder-text">Pris</p>
+        {% endif %}
+    </div>
+    
+<!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+
+<!-- If you enabled Realtime Database -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+  apiKey: "AIzaSyDk_Mmgnp_zfb9lG3oHcyYDqOKOIyMn2Hw",
+  authDomain: "digmi-barcode.firebaseapp.com",
+  databaseURL: "https://digmi-barcode-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "digmi-barcode",
+  storageBucket: "digmi-barcode.appspot.com",
+  messagingSenderId: "569078758065",
+  appId: "1:569078758065:web:98203dd04a3a4dec708090",
+  measurementId: "G-P210KFFS54"
+};
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Reference to your entire Firebase database
+var myFirebase = firebase.database().ref();
+
+// Reference to your data object inside the Firebase database
+var myDataRef = myFirebase.child('your_data_object');
+
+// Push our first data object to our data object inside the Firebase database
+myDataRef.push({name: "myName", text: "message text"});
+
+// Listen for realtime changes to our data object
+myDataRef.on("value", function(snapshot) {
+    // Get the value of the data
+    var data = snapshot.val();
+    
+    // Do something with the data like:
+    console.log(data);
+    
+    // Or iterate through data if it's an object
+    for(var key in data) {
+        console.log(data[key].name);
+        console.log(data[key].text);
+        // etc.
+    }
+});
+</script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+      <script>
+        document.getElementById('barcode').addEventListener('change', function() {
+            this.form.submit();
+        });
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('barcode').focus();
+    // If a product is displayed, set a timeout to reset the page after 5 seconds
+    {% if product %}
+        setTimeout(function() {
+            let productContainer = document.querySelector('.product-container');
+            
+            // Remove the image container
+            let imgContainer = document.querySelector('.img-container');
+            productContainer.removeChild(imgContainer);
+            
+            // Add back the placeholder
+            let placeholderContainer = document.createElement('div');
+            placeholderContainer.classList.add('img-container', 'placeholder-container');
+            let placeholderText = document.createElement('div');
+            placeholderText.classList.add('placeholder-text');
+            placeholderText.innerText = 'Skanna produkt';
+            placeholderContainer.appendChild(placeholderText);
+            productContainer.appendChild(placeholderContainer);
+
+            // Reset text fields
+            document.querySelector('.text-container h2').innerText = 'Produktens namn';
+            document.querySelector('.text-container p:not(#price)').innerText = 'Produktens Information';
+            document.querySelector('.text-container #price').innerText = 'Pris';
+        }, 5000);
+    {% endif %}
+});
+// Initialize Quagga and start scanning
+Quagga.init({
+            inputStream: {
+                type: "LiveStream",
+                constraints: {
+                    width: 640,
+                    height: 480,
+                    facingMode: "environment"
+                },
+                target: document.querySelector('#barcode-scanner')   // Select the scanner window
+            },
+            decoder: {
+                readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "code_39_vin_reader", "codabar_reader", "upc_reader", "upc_e_reader"]
+            }
+        }, function(error) {
+            if (error) {
+                console.log(error);
+                return;
+            }
+            Quagga.start();
+        });
+
+        Quagga.onDetected(function(data) {
+            var code = data.codeResult.code;
+            document.getElementById('barcode').value = code;
+            document.forms[0].submit();
+        });
+
+        <script src="path/to/your/script.js"></script>
+    </script>
+</body>
+</html>
